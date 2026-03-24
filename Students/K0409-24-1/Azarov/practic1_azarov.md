@@ -3,7 +3,7 @@
 ## Блок 1 - namespaces
 
 Требуется просмотреть namespace-ы текущего shell-процесса. Это делается командой "ls -la /proc/$$/ns/"
-![alt text](<../images/Screenshot from 2026-03-24 23-50-01.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-24 23-50-01.png>)
 
 Описание namespace-ов:
 
@@ -33,7 +33,7 @@ time и time_for_children: 4026531834 \
 Позволяет изолировать системные часы (монотонные, boot-time). Нужен для того, чтобы процессы внутри неймспейса «не знали», как долго работает хост, или чтобы корректно работали паузы/возобновления работы контейнеров.
 
 Просмотрим все типы неймспейсов в системе командой "lsns"
-![alt text](<../images/Screenshot from 2026-03-25 00-05-05.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-05-05.png>)
 
 В целом lsns выступает как некий паспортный стол для неймспейсов, потому что эта команда показывает все активные пространства неймспейсов. 
 
@@ -54,14 +54,14 @@ unshare - Утилита для запуска программы в новых 
 --fork - Создать новый процесс (fork) перед запуском программы\
 --mount-proc - Автоматически примонтировать /proc в новом неймспейсе\
 /bin/bash - Какую программу запустить внутри изоляции\
-![alt text](<../images/Screenshot from 2026-03-25 00-12-13.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-12-13.png>)
 
 Убедимся что мы PID 1
 echo "Мой PID: $$"
-![alt text](<../images/Screenshot from 2026-03-25 00-13-18.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-13-18.png>)
 
 Просмотрим запущенные процессы командой ps aux
-![alt text](<../images/Screenshot from 2026-03-25 00-14-38.png>)
+![alt text](<.Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-14-38.png>)
 
 Запущено два процесса всего, потому что мы запустили баш в контейнере. При выходе этот контейнер просто напросто исчезнет.
 
@@ -69,7 +69,7 @@ echo "Мой PID: $$"
 
 Создадим изолированное сетевое окружение командой sudo unshare --net /bin/bash
 просмотрим список сетевых интерфейсов командой ip link show. Мы увидим, что есть только loopback-интерфейс, и тот неактивен, а значит изоляция работает.
-![alt text](<../images/Screenshot from 2026-03-25 00-18-24.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-18-24.png>)
 
 Выйдем из окружения так же командой exit
 
@@ -78,25 +78,25 @@ echo "Мой PID: $$"
 Найдем иерархию cgroup v2: ls /sys/fs/cgroup/
 
 Cgroups - это важнейший механизм для ограничения и учёта ресурсов процессов.
-![alt text](<../images/Screenshot from 2026-03-25 00-24-25.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-24-25.png>)
 
 Создадим свою cgroup и ограничим CPU до 20%:\
 sudo mkdir /sys/fs/cgroup/mytest \
 echo "20000 100000" | sudo tee /sys/fs/cgroup/mytest/cpu.max
-![alt text](<../images/Screenshot from 2026-03-25 00-25-53.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-25-53.png>)
 
 Запустим нагрузку и поместим ее в cgroup:\
 stress-ng --cpu 2 --timeout 30s &
 echo $! | sudo tee /sys/fs/cgroup/mytest/cgroup.procs
-![alt text](<../images/Screenshot from 2026-03-25 00-27-08.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-27-08.png>)
 
 Проверим, что лимит применился и посмотрим в top:\
 cat /sys/fs/cgroup/mytest/cpu.stat\
-![alt text](<../images/Screenshot from 2026-03-25 00-37-56.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-37-56.png>)
 top
-![alt text](<../images/Screenshot from 2026-03-25 00-34-42.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-34-42.png>)
 Скриншот лимита (cat /sys/fs/cgroup/mytest/cpu.max):
-![alt text](<../images/Screenshot from 2026-03-25 00-40-42.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-40-42.png>)
 
 Уберем нагрузку, убив процесс: \
 sudo kill $(cat /sys/fs/cgroup/mytest/cgroup.procs) \
@@ -138,10 +138,10 @@ cp /lib64/ld-linux-x86-64.so.2 /tmp/myroot/lib64/\
  ldd может не показать загрузчик в выводе (он в первой строке linux-vdso.so.1)\
  Без него программы не запустятся
 
-![alt text](<../images/Screenshot from 2026-03-25 00-52-28.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 00-52-28.png>)
 
 Войдем в chroot-окружение : sudo chroot /tmp/myroot /bin/bash\
-![alt text](<../images/Screenshot from 2026-03-25 01-04-45.png>)
+![alt text](<Students/K0409-24-1/Azarov/images/Screenshot from 2026-03-25 01-04-45.png>)
 
 Итог: Вот как работает контейнер — namespace + cgroup + chroot. Docker это автоматизирует.
 
